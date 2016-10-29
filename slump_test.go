@@ -151,7 +151,7 @@ func TestLenValues(t *testing.T) {
 		m.Add(tt.values)
 
 		if got, want := m.Len(), len(tt.values); got != want {
-			t.Errorf("Len() got %d; want %s", got, want)
+			t.Errorf("Len() got %d; want %d", got, want)
 		}
 	}
 }
