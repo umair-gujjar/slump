@@ -156,6 +156,18 @@ func TestLenValues(t *testing.T) {
 	}
 }
 
+func TestSetText(t *testing.T) {
+	for _, tt := range getMessagesTests {
+		m := New("")
+		m.SetText(tt.text)
+		m.Add(tt.values)
+
+		if got := m.Text(); got != tt.text {
+			t.Errorf("Text() got %q; want %q", got, tt.text)
+		}
+	}
+}
+
 func TestRender(t *testing.T) {
 	for _, tt := range getMessagesTests {
 		m := New(tt.text)
@@ -173,7 +185,7 @@ func TestRender(t *testing.T) {
 
 func TestEmptyTextFail(t *testing.T) {
 	m := New("")
-	if got, want := m.String(), ErrEmptyText.Error(); got != want {
+	if got, want := m.String(), errEmptyText.Error(); got != want {
 		t.Errorf("String() got %q; want %q", got, want)
 	}
 }

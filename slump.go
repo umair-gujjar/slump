@@ -15,17 +15,37 @@ import (
 var (
 	DelimsLeft  = "{"
 	DelimsRight = "}"
-
-	ErrEmptyText = errors.New("text to format was not provided")
-
-	_ error = (*Message)(nil)
 )
+
+var (
+	errEmptyText = errors.New("text to format was not provided")
+
+	_ error   = (*message)(nil)
+	_ Handler = (*message)(nil)
+)
+
+// Handler is an interface to handle message.
+type Handler interface {
+	Add(Values)
+	Clear()
+	Del(string)
+	Get(string) interface{}
+	HasValues() bool
+	Keys() []string
+	Len() int
+	Set(string, interface{})
+	SetText(string)
+	Text() string
+	Render() (string, error)
+	String() string
+	Error() string
+}
 
 // Values is the type of the map defining the mapping from keys to values.
 type Values map[string]interface{}
 
 // Message is the representation of a formated text.
-type Message struct {
+type message struct {
 	text   string
 	values Values
 }
@@ -35,8 +55,8 @@ type Message struct {
 //    s.Set("name", "Gopher")
 //
 //    println(s)
-func New(text string) *Message {
-	return &Message{
+func New(text string) Handler {
+	return &message{
 		text:   text,
 		values: make(Values),
 	}
@@ -63,29 +83,29 @@ func Err(text string, v Values) error {
 }
 
 // Add adds values.
-func (m *Message) Add(values Values) {
+func (m *message) Add(values Values) {
 	for k, v := range values {
 		m.values[k] = v
 	}
 }
 
 // Clear clears all values.
-func (m *Message) Clear() {
+func (m *message) Clear() {
 	m.values = make(Values)
 }
 
 // Del deletes a value.
-func (m *Message) Del(key string) {
+func (m *message) Del(key string) {
 	delete(m.values, key)
 }
 
 // Error returns the formated text into string.
-func (m *Message) Error() string {
+func (m *message) Error() string {
 	return m.String()
 }
 
 // Get returns a value by name.
-func (m *Message) Get(key string) interface{} {
+func (m *message) Get(key string) interface{} {
 	if v, ok := m.values[key]; ok {
 		return v
 	}
@@ -93,12 +113,12 @@ func (m *Message) Get(key string) interface{} {
 }
 
 // HasValues returns if the text has values.
-func (m *Message) HasValues() bool {
+func (m *message) HasValues() bool {
 	return m.Len() > 0
 }
 
 // Keys returns the values keys.
-func (m *Message) Keys() []string {
+func (m *message) Keys() []string {
 	var keys = make([]string, 0, m.Len())
 	for k := range m.values {
 		keys = append(keys, k)
@@ -107,19 +127,29 @@ func (m *Message) Keys() []string {
 }
 
 // Len returns the number of values.
-func (m *Message) Len() int {
+func (m *message) Len() int {
 	return len(m.values)
 }
 
-// Set sets a value by name.
-func (m *Message) Set(key string, value interface{}) {
+// SetValue sets a value by name.
+func (m *message) Set(key string, value interface{}) {
 	m.values[key] = value
 }
 
+// SetText sets the text of message.
+func (m *message) SetText(t string) {
+	m.text = t
+}
+
+// Text returns the text of this current message.
+func (m *message) Text() string {
+	return m.text
+}
+
 // Render applies a parsed text to string.
-func (m *Message) Render() (s string, err error) {
+func (m *message) Render() (s string, err error) {
 	if m.text == "" || !m.HasValues() {
-		return "", ErrEmptyText
+		return "", errEmptyText
 	}
 
 	t := template.New("")
@@ -137,7 +167,7 @@ func (m *Message) Render() (s string, err error) {
 }
 
 // String returns the formated text into string.
-func (m *Message) String() string {
+func (m *message) String() string {
 	s, err := m.Render()
 	if err != nil {
 		return err.Error()
