@@ -28,12 +28,12 @@ var (
 type Handler interface {
 	Add(Values)
 	Clear()
-	Del(string)
-	Get(string) interface{}
+	Del(key string)
+	Get(key string) interface{}
 	HasValues() bool
 	Keys() []string
 	Len() int
-	Set(string, interface{})
+	Set(key string, value interface{})
 	SetText(string)
 	Text() string
 	Render() (string, error)
