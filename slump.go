@@ -20,25 +20,37 @@ var (
 var (
 	errEmptyText = errors.New("text to format was not provided")
 
-	_ error   = (*message)(nil)
-	_ Handler = (*message)(nil)
+	_ error    = (*message)(nil)
+	_ Provider = (*message)(nil)
+	_ Handler  = (*message)(nil)
+	_ Render   = (*message)(nil)
 )
+
+// Provider is an interface to provide message values.
+type Provider interface {
+	Add(Values)
+	Del(key string)
+	Set(key string, value interface{})
+	SetText(string)
+	Text() string
+}
 
 // Handler is an interface to handle message.
 type Handler interface {
-	Add(Values)
+	Provider
+	Render
 	Clear()
-	Del(key string)
 	Get(key string) interface{}
 	HasValues() bool
 	Keys() []string
 	Len() int
-	Set(key string, value interface{})
-	SetText(string)
-	Text() string
-	Render() (string, error)
-	String() string
 	Error() string
+	String() string
+}
+
+// Render is an interface to generate message.
+type Render interface {
+	Render() (string, error)
 }
 
 // Values is the type of the map defining the mapping from keys to values.
