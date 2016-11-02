@@ -64,7 +64,7 @@ func TestClear(t *testing.T) {
 		m.Value.Add(tt.value)
 		m.Value.Clear()
 
-		if got := m.Value.IsEmpty(); got {
+		if got := m.Value.IsEmpty(); !got {
 			t.Errorf("Clear() got %t; want false", got)
 		}
 	}
