@@ -98,7 +98,7 @@ func New(text string) *Message {
 }
 
 // Str returns a formated text into string.
-//    s := slump.Str("Hello, {.name}", slump.Values{"name": "Gopher"})
+//    s := slump.Str("Hello, {.name}", slump.Value{"name": "Gopher"})
 //
 //    println(s)
 func Str(text string, v Value) string {
@@ -110,7 +110,7 @@ func Str(text string, v Value) string {
 // Err returns a formated text into error.
 //    path := "filename.txt"
 //
-//    err := slump.Err("no such file or directory: {.path}", slump.Values{"path": path})
+//    err := slump.Err("no such file or directory: {.path}", slump.Value{"path": path})
 //
 //    println(err.Error())
 func Err(text string, v Value) error {
