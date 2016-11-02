@@ -22,7 +22,7 @@ package main
 import "github.com/nanoninja/slump"
 
 func main() {
-    s := slump.Str("Hello, {.name}", slump.Values{"name": "Gopher"})
+    s := slump.Str("Hello, {.name}", slump.Value{"name": "Gopher"})
 
     println(s)
 }
@@ -34,7 +34,7 @@ func main() {
 
 ``` go
 s := slump.New("Hello, {.name}")
-s.Set("name", "Gopher")
+s.Value.Set("name", "Gopher")
 
 println(s.String())
 ```
@@ -43,9 +43,9 @@ println(s.String())
 
 ``` go
 s := slump.New("Hello, {.name}")
-s.Add(slump.Values{"a": 1, "b": 2, "c": 3})
+s.Value.Add(slump.Value{"a": 1, "b": 2, "c": 3})
 
-println(strings.Join(s.Keys(), ", ")) // a, b, c
+println(strings.Join(s.Value.Keys(), ", ")) // a, b, c
 ```
 
 
@@ -54,7 +54,7 @@ println(strings.Join(s.Keys(), ", ")) // a, b, c
 ``` go
 path := "filename.txt"
 
-err := slump.Err("no such file or directory: {.path}", slump.Values{"path": path})
+err := slump.Err("no such file or directory: {.path}", slump.Value{"path": path})
 
 println(err.Error())
 ```
@@ -62,7 +62,7 @@ println(err.Error())
 ### Formatting floating point number
 
 ```go
-s := slump.Str(`Number: {printf "%.2f" .num}`, slump.Values{"num": 0.393752})
+s := slump.Str(`Number: {printf "%.2f" .num}`, slump.Value{"num": 0.393752})
 
 println(s) // Number: 0.39
 ```
@@ -76,7 +76,7 @@ user := struct {
     Name: "Gopher",
 }
 
-s := slump.Str(`Hello, {.user.Name} `, slump.Values{"user": user})
+s := slump.Str(`Hello, {.user.Name} `, slump.Value{"user": user})
 
 println(s) // Hello, Gopher
 ```

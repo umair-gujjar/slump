@@ -85,7 +85,7 @@ type Message struct {
 
 // New returns a new instance of message.
 //    s := slump.New("Hello, {.name}")
-//    s.Set("name", "Gopher")
+//    s.Value.Set("name", "Gopher")
 //
 //    println(s)
 func New(text string) *Message {
