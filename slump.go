@@ -20,46 +20,67 @@ var (
 var (
 	errEmptyText = errors.New("text to format was not provided")
 
-	_ error    = (*message)(nil)
-	_ Provider = (*message)(nil)
-	_ Handler  = (*message)(nil)
-	_ Render   = (*message)(nil)
+	_ error = (*Message)(nil)
 )
 
-// Provider is an interface to provide message values.
-type Provider interface {
-	Add(Values)
-	Del(key string)
-	Set(key string, value interface{})
-	SetText(string)
-	Text() string
+// A Value represents the key-value pairs in a Value.
+type Value map[string]interface{}
+
+// Add add the key-value pairs in values.
+func (v Value) Add(values map[string]interface{}) {
+	for key, val := range values {
+		v.Set(key, val)
+	}
 }
 
-// Handler is an interface to handle message.
-type Handler interface {
-	Provider
-	Render
-	Clear()
-	Get(key string) interface{}
-	HasValues() bool
-	Keys() []string
-	Len() int
-	Error() string
-	String() string
+// Clear clears the key-value pairs in a Value.
+func (v Value) Clear() {
+	v = make(Value)
 }
 
-// Render is an interface to generate message.
-type Render interface {
-	Render() (string, error)
+// Del deletes the values associated with key.
+func (v Value) Del(key string) {
+	delete(v, key)
 }
 
-// Values is the type of the map defining the mapping from keys to values.
-type Values map[string]interface{}
+// Get gets the first value associated with the given key.
+// If there are no values associated with the key, Get returns nil.
+func (v Value) Get(key string) interface{} {
+	if value, ok := v[key]; ok {
+		return value
+	}
+	return nil
+}
+
+// IsEmpty returns if the value has entries.
+func (v Value) IsEmpty() bool {
+	return v.Len() == 0
+}
+
+// Keys returns the keys set in the Set values.
+func (v Value) Keys() []string {
+	var keys = make([]string, 0, len(v))
+	for k := range v {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+// Len returns the length of the value entries.
+func (v Value) Len() int {
+	return len(v)
+}
+
+// Set sets the value entries associated with key to the single element value.
+// It replaces any existing values associated with key.
+func (v Value) Set(key string, value interface{}) {
+	v[key] = value
+}
 
 // Message is the representation of a formated text.
-type message struct {
-	text   string
-	values Values
+type Message struct {
+	Text  string
+	Value Value
 }
 
 // New returns a new instance of message.
@@ -67,10 +88,10 @@ type message struct {
 //    s.Set("name", "Gopher")
 //
 //    println(s)
-func New(text string) Handler {
-	return &message{
-		text:   text,
-		values: make(Values),
+func New(text string) *Message {
+	return &Message{
+		Text:  text,
+		Value: make(Value),
 	}
 }
 
@@ -78,9 +99,9 @@ func New(text string) Handler {
 //    s := slump.Str("Hello, {.name}", slump.Values{"name": "Gopher"})
 //
 //    println(s)
-func Str(text string, v Values) string {
+func Str(text string, v Value) string {
 	m := New(text)
-	m.Add(v)
+	m.Value = v
 	return m.String()
 }
 
@@ -90,96 +111,37 @@ func Str(text string, v Values) string {
 //    err := slump.Err("no such file or directory: {.path}", slump.Values{"path": path})
 //
 //    println(err.Error())
-func Err(text string, v Values) error {
+func Err(text string, v Value) error {
 	return errors.New(Str(text, v))
 }
 
-// Add adds values.
-func (m *message) Add(values Values) {
-	for k, v := range values {
-		m.values[k] = v
-	}
-}
-
-// Clear clears all values.
-func (m *message) Clear() {
-	m.values = make(Values)
-}
-
-// Del deletes a value.
-func (m *message) Del(key string) {
-	delete(m.values, key)
-}
-
 // Error returns the formated text into string.
-func (m *message) Error() string {
+func (m *Message) Error() string {
 	return m.String()
 }
 
-// Get returns a value by name.
-func (m *message) Get(key string) interface{} {
-	if v, ok := m.values[key]; ok {
-		return v
-	}
-	return nil
-}
-
-// HasValues returns if the text has values.
-func (m *message) HasValues() bool {
-	return m.Len() > 0
-}
-
-// Keys returns the values keys.
-func (m *message) Keys() []string {
-	var keys = make([]string, 0, m.Len())
-	for k := range m.values {
-		keys = append(keys, k)
-	}
-	return keys
-}
-
-// Len returns the number of values.
-func (m *message) Len() int {
-	return len(m.values)
-}
-
-// SetValue sets a value by name.
-func (m *message) Set(key string, value interface{}) {
-	m.values[key] = value
-}
-
-// SetText sets the text of message.
-func (m *message) SetText(t string) {
-	m.text = t
-}
-
-// Text returns the text of this current message.
-func (m *message) Text() string {
-	return m.text
-}
-
 // Render applies a parsed text to string.
-func (m *message) Render() (s string, err error) {
-	if m.text == "" || !m.HasValues() {
+func (m *Message) Render() (s string, err error) {
+	if m.Text == "" || m.Value.IsEmpty() {
 		return "", errEmptyText
 	}
 
 	t := template.New("")
 	t.Delims(DelimsLeft, DelimsRight)
 
-	t, err = t.Parse(m.text)
+	t, err = t.Parse(m.Text)
 	if err != nil {
 		return
 	}
 
 	var b bytes.Buffer
-	err = t.Execute(&b, m.values)
+	err = t.Execute(&b, m.Value)
 	s = b.String()
 	return
 }
 
 // String returns the formated text into string.
-func (m *message) String() string {
+func (m *Message) String() string {
 	s, err := m.Render()
 	if err != nil {
 		return err.Error()
