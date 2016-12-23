@@ -81,6 +81,18 @@ s := slump.Str("Hello, {.user.Name} ", slump.Value{"user": user})
 println(s) // Hello, Gopher
 ```
 
+## Benchmarks
+
+Run on MacBook Pro (Retina, 15-inch, Half 2014) 2,5 GHz Intel Core i7 16 Go 1600 MHz DDR3 using Go version go1.7.4 darwin/amd64.
+
+```shell
+go test -bench=. -benchmem *.go
+```
+
+```go
+BenchmarkStr-8   	   50000	     26677 ns/op	   10639 B/op	      99 allocs/op
+BenchmarkErr-8   	   50000	     26806 ns/op	   10654 B/op	     100 allocs/op
+```
 
 ## License
 
