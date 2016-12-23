@@ -76,7 +76,7 @@ user := struct {
     Name: "Gopher",
 }
 
-s := slump.Str(`Hello, {.user.Name} `, slump.Value{"user": user})
+s := slump.Str("Hello, {.user.Name} ", slump.Value{"user": user})
 
 println(s) // Hello, Gopher
 ```

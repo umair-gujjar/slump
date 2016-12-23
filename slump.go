@@ -124,8 +124,13 @@ func (m *Message) Error() string {
 
 // Render applies a parsed text to string.
 func (m *Message) Render() (s string, err error) {
-	if m.Text == "" || m.Value.IsEmpty() {
+	if m.Text == "" {
 		return "", errEmptyText
+	}
+
+	if m.Value.IsEmpty() {
+		s = m.Text
+		return
 	}
 
 	t := template.New("")
