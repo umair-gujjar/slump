@@ -168,6 +168,20 @@ func TestSetText(t *testing.T) {
 	}
 }
 
+func TestRenderWithEmptyValue(t *testing.T) {
+	for _, tt := range getMessagesTests {
+		m := New(tt.text)
+		s, err := m.Render()
+
+		if err != nil {
+			t.Error(err)
+		}
+		if s != tt.text {
+			t.Errorf("Render() got %q; want %q", s, tt.text)
+		}
+	}
+}
+
 func TestRender(t *testing.T) {
 	for _, tt := range getMessagesTests {
 		m := New(tt.text)
