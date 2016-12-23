@@ -78,8 +78,8 @@ func TestDel(t *testing.T) {
 		for k := range tt.value {
 			m.Value.Del(k)
 		}
-		if got, want := m.Value.Len(), 0; got != want {
-			t.Errorf("Len() got %d; want %d", got, want)
+		if got, want := m.Value.Count(), 0; got != want {
+			t.Errorf("Count() got %d; want %d", got, want)
 		}
 	}
 }
@@ -129,7 +129,7 @@ func TestKeys(t *testing.T) {
 		m := New(tt.text)
 		m.Value.Add(tt.value)
 
-		if got, want := m.Value.Len(), len(tt.keys); got != want {
+		if got, want := m.Value.Count(), len(tt.keys); got != want {
 			t.Errorf("Keys() got len %d; want %d", got, want)
 		}
 
@@ -145,13 +145,13 @@ func TestKeys(t *testing.T) {
 	}
 }
 
-func TestLenValues(t *testing.T) {
+func TestCountValues(t *testing.T) {
 	for _, tt := range getMessagesTests {
 		m := New(tt.text)
 		m.Value.Add(tt.value)
 
-		if got, want := m.Value.Len(), len(tt.value); got != want {
-			t.Errorf("Len() got %d; want %d", got, want)
+		if got, want := m.Value.Count(), len(tt.value); got != want {
+			t.Errorf("Count() got %d; want %d", got, want)
 		}
 	}
 }

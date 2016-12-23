@@ -56,7 +56,7 @@ func (v Value) Get(key string) interface{} {
 
 // IsEmpty returns if the value has entries.
 func (v Value) IsEmpty() bool {
-	return v.Len() == 0
+	return len(v) == 0
 }
 
 // Keys returns the keys set in the Set values.
@@ -68,8 +68,8 @@ func (v Value) Keys() []string {
 	return keys
 }
 
-// Len returns the length of the value entries.
-func (v Value) Len() int {
+// Count returns the total number of value.
+func (v Value) Count() int {
 	return len(v)
 }
 
