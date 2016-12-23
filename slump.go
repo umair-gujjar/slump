@@ -90,8 +90,8 @@ type Message struct {
 //    s.Value.Set("name", "Gopher")
 //
 //    println(s)
-func New(text string) *Message {
-	return &Message{
+func New(text string) Message {
+	return Message{
 		Text:  text,
 		Value: make(Value),
 	}
