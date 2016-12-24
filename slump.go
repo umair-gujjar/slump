@@ -34,10 +34,8 @@ func (v Value) Add(values map[string]interface{}) {
 }
 
 // Clear clears the key-value pairs in a Value.
-func (v Value) Clear() {
-	for k := range v {
-		delete(v, k)
-	}
+func (v *Value) Clear() {
+	*v = make(Value)
 }
 
 // Del deletes the values associated with key.
