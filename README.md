@@ -24,7 +24,7 @@ import "github.com/nanoninja/slump"
 func main() {
     s := slump.Str("Hello, {.name}", slump.Value{"name": "Gopher"})
 
-    println(s)
+    fmt.Println(s)
 }
 ```
 
@@ -36,16 +36,19 @@ func main() {
 s := slump.New("Hello, {.name}")
 s.Value.Set("name", "Gopher")
 
-println(s.String())
+fmt.Println(s.String())
 ```
 
-### Getting keys of the values
+### Using Value
 
 ``` go
-s := slump.New("Hello, {.name}")
-s.Value.Add(slump.Value{"a": 1, "b": 2, "c": 3})
+s := slump.New("coordinate: {.x}, {.y}, {.z}")
+s.Value.Add(slump.Value{"x": 1, "y": 2, "z": 3})
 
-println(strings.Join(s.Value.Keys(), ", ")) // a, b, c
+fmt.Println(s.Value.IsEmpty()) // false
+fmt.Println(s.Value.Count())   // 3
+fmt.Println(s.Value.Get("y"))  // 2
+fmt.Println(s.Value.Keys())    // [x, y, z] unsorted
 ```
 
 
@@ -56,7 +59,7 @@ path := "filename.txt"
 
 err := slump.Err("no such file or directory: {.path}", slump.Value{"path": path})
 
-println(err.Error())
+fmt.Println(err.Error())
 ```
 
 ### Formatting floating point number
@@ -64,7 +67,7 @@ println(err.Error())
 ```go
 s := slump.Str(`Number: {printf "%.2f" .num}`, slump.Value{"num": 0.393752})
 
-println(s) // Number: 0.39
+fmt.Println(s) // Number: 0.39
 ```
 
 ### Using object
@@ -78,7 +81,7 @@ user := struct {
 
 s := slump.Str("Hello, {.user.Name} ", slump.Value{"user": user})
 
-println(s) // Hello, Gopher
+fmt.Println(s) // Hello, Gopher
 ```
 
 ## Benchmarks
