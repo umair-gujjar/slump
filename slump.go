@@ -146,7 +146,7 @@ func (m *Message) Render() (s string, err error) {
 }
 
 // String returns the formated text into string.
-func (m *Message) String() string {
+func (m Message) String() string {
 	s, err := m.Render()
 	if err != nil {
 		return err.Error()
